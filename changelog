@@ -1,0 +1,62 @@
+
+FeedingBottle is a Aircrack-ng GUI.
+
+More about Aircrack-ng, please visit:
+http://www.aircrack-ng.org
+
+ZhaoChunsheng Tianjin,China
+
+- - - - - -
+Changelog:
+
+2018-02-11 FeedingBottle-3.3
+--- Open source;Support Aircrack-ng 1.2 rc4;Remove force fake authentication function and fixed some bug
+
+2012-03-12 FeedingBottle-3.2.3
+--- Fixed a bug where SSIDs containing 32 characters caused a crash
+
+2012-03-03 FeedingBottle-3.2.2
+--- Generate *.hccap file directly when get handshake packets (Hashcat1.0 project file)
+--- Call xterm as default
+
+2011-08-14 FeedingBottle-3.2.1
+--- Fixed the bug that can not run the program using right click menu on desktop(Tiny Core Linux)
+
+2011-02-27 FeedingBottle-3.2
+--- Generate *.wkp file directly when get handshake packets (EWSA3.x project file)
+
+2010-05-20 FeedingBottle-3.1
+--- Added advanced GUI for WPA mode;added OPN mode support;for legitimate client analyzing,capture packet for 6 seconds after getting WPA handshake packet in order to detect whether there is a Deauthentication Packet
+
+2010-02-12 FeedingBottle-3.0 Final
+--- Optimized code and fixed some bug
+
+2010-01-22 FeedingBottle-3.0 RC3
+--- Added force fake authentication function--try this when fake authentication(aireplay-ng -1) fail;display the schedule of buliding XOR file when using chopchop(-4) attack;changed the cursor's color of "Attack Command";added "Ignore The Error Item of AP" option in get AP list interface(ex.:133CH);changed the font of AP/Client list to monospaced font
+
+2009-12-24 FeedingBottle-3.0 RC2
+--- More compatible,support bt3-final,auto close aircrack-ng when FeedingBottle exits,default AP scanning time changed from 15s to 30s,display error information when fail to get AP list
+
+2009-11-30 FeedingBottle-3.0 RC1
+--- 
+1.Added an advanced GUI,as a command bulider,auto create command for Aircrack-ng and get the output information(1,WEP only;2,support command modify;3.Autorun button for aotu execute the default command which is built)
+2.Display detailed information when scanning AP;AP scanning time options:5s/15s/30s/1m/5m/15m
+
+2009-11-15 FeedingBottle-2.0 RC2.1
+--- Updated FeedingBottle to 2.0 RC2.1:more compatible,added aterm for supporting bt4-pre-final;changed default time of AP scanning from 10s to 15s;changed the color of aterm window;fixed the bug occurred when obtain the XOR file's name of -4/-5 attack;fixed the bug occurred when click the blank area of "APs Information" some odd client information display;added optional 14 channels support;show character of WEP key when it is ASCII;Updated GUI;fixed the bug that the client list,which display on "Clients Information" area,can't be clear during AP scanning
+
+2009-10-30 FeedingBottle-2.0 RC2
+--- Added WPA/WPA2 support,providing a simple password.lst;fixed the overflow bug when obtained some odd PWR values
+
+2009-10-17 FeedingBottle-2.0 RC1
+--- COMPLETELY REWORTE
+
+2009-09-23 FeedingBottle-1.0 RC2.1
+--- Added optional AP's scanning time support,improved part of code
+
+2009-09-16 FeedingBottle-1.0 RC2
+--- Added deauth(-0),fakeauth(-1) and interactive(-2) support,improved part of code
+
+2009-09-14 
+--- The first version
+

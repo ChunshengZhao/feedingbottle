@@ -249,8 +249,8 @@ else
         while(fgets(ReadLine,256,file_desc))
             {
                 printf("WirelessDeviceMAC.txt --> %s\\n",ReadLine);
-                WirelessDeviceNum=0;
-                while(WirelessDeviceInfo[WirelessDeviceNum].WirelessDeviceConnect)
+
+                if(WirelessDeviceInfo[WirelessDeviceNum].WirelessDeviceConnect)
                     {
                         if(strstr(ReadLine,WirelessDeviceInfo[WirelessDeviceNum].WirelessDeviceName))//"wlan0"
                             {
@@ -258,9 +258,11 @@ else
                                 //link/ether xx:xx:xx:xx:xx:xx brd ff:ff:ff:ff:ff:ff
                                 strncpy(WirelessDeviceInfo[WirelessDeviceNum].WirelessDeviceMAC,strstr(ReadLine,"link/ether ")+11,17);
                                 printf("* Info : Found WirelessDeviceMAC : %s\\n",WirelessDeviceInfo[WirelessDeviceNum].WirelessDeviceMAC);
+                                WirelessDeviceNum++;
                             }
-                        WirelessDeviceNum++;
                     }
+                else
+                    break;
             }
 
         printf("* Info : Found %d WirelessDeviceMAC !\\n",WirelessDeviceNum);
@@ -342,9 +344,9 @@ else
           xywh {142 270 365 25} box UP_BOX color 34 labelfont 5 labelcolor 48 textfont 5 textsize 12 textcolor 1
         }
         Fl_Button {} {
-          label {FeedingBottle 3.3}
+          label {FeedingBottle 3.31}
           callback Box_About_CallBack
-          tooltip {Coded by ZhaoChunsheng (Tianjin,China) at 2018.02.11} xywh {5 325 175 25} box NO_BOX color 0 labelfont 7 labelcolor 232
+          tooltip {Coded by ZhaoChunsheng (Tianjin,China) at 2018.02.14} xywh {5 325 175 25} box NO_BOX color 0 labelfont 7 labelcolor 232
         }
       }
       Fl_Group {} {
@@ -2983,8 +2985,7 @@ else
     }} {}
 }
 
-Function {Button_Capture_CallBack(Fl_Widget*,void*)} {open
-} {
+Function {Button_Capture_CallBack(Fl_Widget*,void*)} {} {
   code {//Capture
 printf("****************************Capture**************************\\n");
 printf("WirelessDevNameSelect :%s \\n",m_WirelessDevNameSelect);

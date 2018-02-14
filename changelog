@@ -9,6 +9,9 @@ ZhaoChunsheng Tianjin,China
 - - - - - -
 Changelog:
 
+2018-02-14 FeedingBottle-3.31
+--- Fixed a bug: Abnormal exit has occurred while the wireless device is in use. Thanks to kimocoder.
+
 2018-02-11 FeedingBottle-3.3
 --- Open source;Support Aircrack-ng 1.2 rc4;Remove force fake authentication function and fixed some bug
 

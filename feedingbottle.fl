@@ -201,71 +201,40 @@ if(system("rm -rf /tmp/FeedingBottle"));
 if(system("mkdir -p /tmp/FeedingBottle"));
 DelTemFiles();
 
-if(system("iwconfig > /tmp/FeedingBottle/WirelessDeviceName.txt"));
-if(system("ip address > /tmp/FeedingBottle/WirelessDeviceMAC.txt"));
+if(system("iw dev | awk '/Interface/{print $2} /addr/{print $2}' > /tmp/FeedingBottle/WirelessDevice.txt"));
 
-//WirelessDeviceName.txt
+//WirelessDevice.txt
 int WirelessDeviceNum=0;
 
 FILE* file_desc;
-file_desc = fopen("/tmp/FeedingBottle/WirelessDeviceName.txt", "r");
+file_desc = fopen("/tmp/FeedingBottle/WirelessDevice.txt", "r");
 
 if (file_desc == NULL)
-    printf("* Error : Can not open file : WirelessDeviceName.txt\\n");
+    printf("* Error : Can not open file : WirelessDevice.txt\\n");
 else
     {
-        char ReadLine[256]= {0};
+        char ReadLine[32]= {0};
         WirelessDeviceNum=0;
 
-        while(fgets(ReadLine,256,file_desc) && WirelessDeviceNum!=5)
+        while(fgets(ReadLine,32,file_desc) && WirelessDeviceNum!=5)
             {
-                printf("WirelessDeviceName.txt --> %s\\n",ReadLine);
-                //wlan0     IEEE 802.11  ESSID:off/any
-                if( ReadLine[0]!=' ' && !strstr(ReadLine,"mon") && strstr(ReadLine,":"))//modify for intel 2200bg
+                printf("WirelessDevice.txt --> %s\\n",ReadLine);
+                WirelessDeviceInfo[WirelessDeviceNum].WirelessDeviceConnect=1;
+                strncpy(WirelessDeviceInfo[WirelessDeviceNum].WirelessDeviceName,ReadLine,strlen(ReadLine)-1);
+                printf("* Info : Found WirelessDeviceName : %s\\n",WirelessDeviceInfo[WirelessDeviceNum].WirelessDeviceName);
+                if(fgets(ReadLine,32,file_desc))
                     {
-                        strtok(ReadLine," ");
-                        WirelessDeviceInfo[WirelessDeviceNum].WirelessDeviceConnect=1;
-                        strcpy(WirelessDeviceInfo[WirelessDeviceNum].WirelessDeviceName,ReadLine);
-                        printf("* Info : Found WirelessDeviceName : %s\\n",WirelessDeviceInfo[WirelessDeviceNum].WirelessDeviceName);
+                        strncpy(WirelessDeviceInfo[WirelessDeviceNum].WirelessDeviceMAC,ReadLine,strlen(ReadLine)-1);
+                        printf("* Info : Found WirelessDeviceMac : %s\\n",WirelessDeviceInfo[WirelessDeviceNum].WirelessDeviceMAC);
                         WirelessDeviceNum++;
+                    }
+                else
+                    {
+                        printf("* Error : Can not get WirelessDevice information!\\n");
                     }
             }
 
         printf("* Info : Found %d WirelessDevice !\\n",WirelessDeviceNum);
-
-        fclose(file_desc);
-    }
-
-//WirelessDeviceMAC.txt
-file_desc = fopen("/tmp/FeedingBottle/WirelessDeviceMAC.txt", "r");
-
-if (file_desc == NULL)
-    printf("* Error : Can not open file : WirelessDeviceMAC.txt\\n");
-else
-    {
-        char ReadLine[256]= {0};
-        WirelessDeviceNum=0;
-
-        while(fgets(ReadLine,256,file_desc))
-            {
-                printf("WirelessDeviceMAC.txt --> %s\\n",ReadLine);
-
-                if(WirelessDeviceInfo[WirelessDeviceNum].WirelessDeviceConnect)
-                    {
-                        if(strstr(ReadLine,WirelessDeviceInfo[WirelessDeviceNum].WirelessDeviceName))//"wlan0"
-                            {
-                                fgets(ReadLine,256,file_desc);
-                                //link/ether xx:xx:xx:xx:xx:xx brd ff:ff:ff:ff:ff:ff
-                                strncpy(WirelessDeviceInfo[WirelessDeviceNum].WirelessDeviceMAC,strstr(ReadLine,"link/ether ")+11,17);
-                                printf("* Info : Found WirelessDeviceMAC : %s\\n",WirelessDeviceInfo[WirelessDeviceNum].WirelessDeviceMAC);
-                                WirelessDeviceNum++;
-                            }
-                    }
-                else
-                    break;
-            }
-
-        printf("* Info : Found %d WirelessDeviceMAC !\\n",WirelessDeviceNum);
 
         fclose(file_desc);
     }} {}
@@ -344,9 +313,9 @@ else
           xywh {142 270 365 25} box UP_BOX color 34 labelfont 5 labelcolor 48 textfont 5 textsize 12 textcolor 1
         }
         Fl_Button {} {
-          label {FeedingBottle 3.31}
+          label {FeedingBottle 3.32}
           callback Box_About_CallBack
-          tooltip {Coded by ZhaoChunsheng (Tianjin,China) at 2018.02.14} xywh {5 325 175 25} box NO_BOX color 0 labelfont 7 labelcolor 232
+          tooltip {Coded by ZhaoChunsheng (Tianjin,China) at 2018.02.16} xywh {5 325 175 25} box NO_BOX color 0 labelfont 7 labelcolor 232
         }
       }
       Fl_Group {} {

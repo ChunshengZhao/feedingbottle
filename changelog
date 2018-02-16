@@ -9,6 +9,9 @@ ZhaoChunsheng Tianjin,China
 - - - - - -
 Changelog:
 
+2018-02-16 FeedingBottle-3.32
+--- Fixed a bug: Unable to get information for multiple wireless devices.
+
 2018-02-14 FeedingBottle-3.31
 --- Fixed a bug: Abnormal exit has occurred while the wireless device is in use. Thanks to kimocoder.
 

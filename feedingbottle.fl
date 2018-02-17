@@ -313,9 +313,9 @@ else
           xywh {142 270 365 25} box UP_BOX color 34 labelfont 5 labelcolor 48 textfont 5 textsize 12 textcolor 1
         }
         Fl_Button {} {
-          label {FeedingBottle 3.32}
+          label {FeedingBottle 3.33}
           callback Box_About_CallBack
-          tooltip {Coded by ZhaoChunsheng (Tianjin,China) at 2018.02.16} xywh {5 325 175 25} box NO_BOX color 0 labelfont 7 labelcolor 232
+          tooltip {Coded by ZhaoChunsheng (Tianjin,China) at 2018.02.17} xywh {5 325 175 25} box NO_BOX color 0 labelfont 7 labelcolor 232
         }
       }
       Fl_Group {} {
@@ -1889,7 +1889,7 @@ if(Button_ScanAP->value()==1)
                                                     \}
                                                 else
                                                     strcpy( APInfo[APNum].APPWR,"---" );
-                                                //APName(BSSID)
+                                                //APName(ESSID)
                                                 strcpy(strrchr(ReadLine,','),"\\0");
                                                 strcpy( APInfo[APNum].APName,strrchr(ReadLine,',')+2 );
                                                 APInfo[APNum].APConnect=1;//Connected
@@ -1900,11 +1900,11 @@ if(Button_ScanAP->value()==1)
                                                         strtok(APChannel_tmp,",");//"  6"
                                                         strcpy(APInfo[APNum].APChannel,strrchr(APChannel_tmp,' ')+1);
                                                     \}
-                                                //APMAC(ESSID)
+                                                //APMAC(BSSID)
                                                 strtok(ReadLine,",");
                                                 strcpy( APInfo[APNum].APMAC,ReadLine );
 
-                                                sprintf(apitem[APNum],"ESSID: %s  Channel:%-4s PWR:%-4s BSSID: %s",
+                                                sprintf(apitem[APNum],"BSSID: %s  Channel:%-4s PWR:%-4s ESSID: %s",
                                                         APInfo[APNum].APMAC,
                                                         APInfo[APNum].APChannel,
                                                         APInfo[APNum].APPWR,

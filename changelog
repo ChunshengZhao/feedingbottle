@@ -9,6 +9,9 @@ ZhaoChunsheng Tianjin,China
 - - - - - -
 Changelog:
 
+2018-02-17 FeedingBottle-3.33
+--- Fixed a bug: The BSSID and ESSID is incorrectly described in "APs Information".
+
 2018-02-16 FeedingBottle-3.32
 --- Fixed a bug: Unable to get information for multiple wireless devices.
 

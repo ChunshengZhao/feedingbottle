@@ -313,9 +313,9 @@ else
           xywh {142 270 365 25} box UP_BOX color 34 labelfont 5 labelcolor 48 textfont 5 textsize 12 textcolor 1
         }
         Fl_Button {} {
-          label {FeedingBottle 3.33}
+          label {FeedingBottle 3.34}
           callback Box_About_CallBack
-          tooltip {Coded by ZhaoChunsheng (Tianjin,China) at 2018.02.17} xywh {5 325 175 25} box NO_BOX color 0 labelfont 7 labelcolor 232
+          tooltip {Coded by ZhaoChunsheng (Tianjin,China) at 2018.02.19} xywh {5 325 175 25} box NO_BOX color 0 labelfont 7 labelcolor 232
         }
       }
       Fl_Group {} {
@@ -1857,77 +1857,62 @@ if(Button_ScanAP->value()==1)
 
                 KillProcess("2","airodump-ng","aireplay-ng","aircrack-ng","packetforge-ng","");
 
+                if(system("cat /tmp/FeedingBottle/scanap-01.csv | awk -F \\",\\" -v OFS=',' '\{if(/WEP|WPA|OPN/)\{sub(/^ */,\\"\\",$1);sub(/^ */,\\"\\",$4);sub(/^ */,\\"\\",$6);sub(/^ */,\\"\\",$9);sub(/^ */,\\"\\",$14);print $1,$4,substr($6,1,4),$9,$14\}else if(/BSSID|Station/)\{print$1\}else if(/:/)\{sub(/^ */,\\"\\",$1);sub(/^ */,\\"\\",$5);sub(/^ */,\\"\\",$6);print $1,$5,$6\}\}' > /tmp/FeedingBottle/scanap.format"));
+
                 FILE* file_desc;
-                file_desc = fopen("/tmp/FeedingBottle/scanap-01.csv", "r");
+                file_desc = fopen("/tmp/FeedingBottle/scanap.format", "r");
 
                 if ( file_desc == NULL )
-                    printf("* Error : Can not open file : /tmp/FeedingBottle/scanap-01.csv\\n");
+                    printf("* Error : Can not open file : /tmp/FeedingBottle/scanap.format\\n");
                 else
                     \{
                         char ReadLine[256]= \{0\};
-                        int APNum=0;
-                        char APChannel_tmp[8]= \{0\};
                         char apitem[128][512]= \{\{0\}\};//Max AP Item is 128 APs see to "struct APInfoStruct APInfo[128]=\{0\};"
-                        char APPWR[5]= \{0\};
-                        char APPWR_tmp[32]= \{0\};
+                        char item[5][33] = \{\{0\}\};
+                        int i=0;
+                        int APNum=0;
 
                         while(fgets(ReadLine,256,file_desc) && APNum!=128)
                             \{
-                                if(ReadLine[0]=='S')//Station MAC
-                                    break;
-                                if(ReadLine[2]==':')//AA:BB:CC:DD:EE:FF
+                                if( strstr(ReadLine,m_EncryptionSelected) )//WEP|WPA|OPN
                                     \{
-                                        if( strstr(ReadLine,m_EncryptionSelected) )//WEP|WPA|OPN
+                                        char *temp = strtok(ReadLine,",");
+                                        while(temp)
                                             \{
-                                                //APPWR
-                                                strncpy(APPWR_tmp,strstr(ReadLine,m_EncryptionSelected),32);
-                                                if(strstr(APPWR_tmp,"-"))
-                                                    \{
-                                                        strncpy(APPWR,strstr(APPWR_tmp,"-"),5);
-                                                        strtok(APPWR,",");
-                                                        strcpy( APInfo[APNum].APPWR,APPWR );
-                                                    \}
-                                                else
-                                                    strcpy( APInfo[APNum].APPWR,"---" );
-                                                //APName(ESSID)
-                                                strcpy(strrchr(ReadLine,','),"\\0");
-                                                strcpy( APInfo[APNum].APName,strrchr(ReadLine,',')+2 );
-                                                APInfo[APNum].APConnect=1;//Connected
-                                                //APChannel
-                                                if(ReadLine[59]==',')//59->",  6,"
-                                                    \{
-                                                        strncpy(APChannel_tmp,&ReadLine[59]+1,8);
-                                                        strtok(APChannel_tmp,",");//"  6"
-                                                        strcpy(APInfo[APNum].APChannel,strrchr(APChannel_tmp,' ')+1);
-                                                    \}
-                                                //APMAC(BSSID)
-                                                strtok(ReadLine,",");
-                                                strcpy( APInfo[APNum].APMAC,ReadLine );
+                                                strcpy(item[i],temp);
+                                                temp = strtok( NULL, "," );
+                                                i++;
+                                            \}
+                                        strcpy(APInfo[APNum].APMAC,item[0]);
+                                        strcpy(APInfo[APNum].APChannel,item[1]);
+                                        strcpy(APInfo[APNum].APPWR,item[3]);
+                                        strncpy(APInfo[APNum].APName,item[4],strlen(item[4])-1);
 
-                                                sprintf(apitem[APNum],"BSSID: %s  Channel:%-4s PWR:%-4s ESSID: %s",
-                                                        APInfo[APNum].APMAC,
-                                                        APInfo[APNum].APChannel,
-                                                        APInfo[APNum].APPWR,
-                                                        APInfo[APNum].APName);
+                                        i=0;
+                                        memset(item,0,sizeof(item));
 
-                                                printf("%s\\n",apitem[APNum]);
+                                        sprintf(apitem[APNum],"BSSID: %s  Channel:%-4s PWR:%-4s ESSID: %s",
+                                                APInfo[APNum].APMAC,
+                                                APInfo[APNum].APChannel,
+                                                APInfo[APNum].APPWR,
+                                                APInfo[APNum].APName);
 
-                                                if(Check_IgnoreAP->value()==1)
-                                                    \{
-                                                        if(0<atoi(APInfo[APNum].APChannel) && atoi(APInfo[APNum].APChannel)<15)
-                                                            \{
-                                                                Brower_APBrower->add(apitem[APNum]);
-                                                                APNum++;
-                                                            \}
-                                                        else
-                                                            printf("*Ignore:%s\\n",apitem[APNum]);
-                                                    \}
+                                        printf("%s\\n",apitem[APNum]);
 
-                                                else
+                                        if(Check_IgnoreAP->value()==1)
+                                            \{
+                                                if(0<atoi(APInfo[APNum].APChannel) && atoi(APInfo[APNum].APChannel)<15)
                                                     \{
                                                         Brower_APBrower->add(apitem[APNum]);
                                                         APNum++;
                                                     \}
+                                                else
+                                                    printf("*Ignore:%s\\n",apitem[APNum]);
+                                            \}
+                                        else
+                                            \{
+                                                Brower_APBrower->add(apitem[APNum]);
+                                                APNum++;
                                             \}
                                     \}
                             \}
@@ -1937,7 +1922,7 @@ if(Button_ScanAP->value()==1)
                         if(APNum==0)
                             Brower_APBrower->add("Found 0 APs!");
                         if (ReadLine[0]=='\\0')
-                            printf("* Error : 'scanap-01.csv' is NULL !\\n");
+                            printf("* Error : 'scanap.format' is NULL !\\n");
                         fclose(file_desc);
                     \}
             \}
@@ -1972,35 +1957,38 @@ if(Brower_APBrower->value())//if click NULL(0 ap found),the value is NULL
         FILE* file_desc;
         char ClientPackets_tmp[16]= {0};
 
-        file_desc = fopen("/tmp/FeedingBottle/scanap-01.csv", "r");
+        file_desc = fopen("/tmp/FeedingBottle/scanap.format", "r");
 
         if (file_desc == NULL)
-            printf("* Error : Can not open file : /tmp/FeedingBottle/scanap-01.csv\\n");
+            printf("* Error : Can not open file : /tmp/FeedingBottle/scanap.format\\n");
         else
             {
                 char ReadLine[256]= {0};
-                int ClientNum=0;
                 char clientitem[64][32]= {{0}}; //Max Client Item is 64 Clients see to "struct ClientInfo[64]={0};"
+                char item[3][18] = {{0}};
+                int i=0;
+                int ClientNum=0;
                 int ClientListStart=0;
 
                 while(fgets(ReadLine,256,file_desc)&&ClientNum!=64)
                     {
-                        if(ReadLine[0]=='S')//Station MAC
+                        if( strstr(ReadLine,"Station MAC") )//Station MAC
                             ClientListStart=1;
-                        if(ReadLine[2]==':' && ClientListStart==1 && strstr(ReadLine,APInfo[Brower_APBrower->value()-1].APMAC))
+                        if( ClientListStart==1 && strstr(ReadLine,APInfo[Brower_APBrower->value()-1].APMAC) )
                             {
-                                if(ReadLine[59]==',')//59->", -76,       29,"
+                                char *temp = strtok(ReadLine,",");
+                                while(temp)
                                     {
-                                        strncpy(ClientPackets_tmp,&ReadLine[59]+1,14);
-                                        //printf("ClientPackets_tmp : %s\\n",ClientPackets_tmp);
-                                        strcpy(ClientPackets_tmp,strrchr(ClientPackets_tmp,' ')+1);//ClientPackets "29,"
-                                        //printf("ClientPackets_tmp : %s\\n",ClientPackets_tmp);
-                                        strtok(ClientPackets_tmp,",");//ClientPackets "29,"->"29"
-                                        strcpy(ClientInfo[ClientNum].ClientPackets,ClientPackets_tmp);
-                                        //printf("ClientPackets_tmp : %s\\n",ClientPackets_tmp);
+                                        strcpy(item[i],temp);
+                                        temp = strtok( NULL, "," );
+                                        i++;
                                     }
-                                strtok(ReadLine,",");
-                                strcpy(ClientInfo[ClientNum].ClientMAC,ReadLine);
+
+                                strcpy(ClientInfo[ClientNum].ClientMAC,item[0]);
+                                strcpy(ClientInfo[ClientNum].ClientPackets,item[1]);
+
+                                i=0;
+                                memset(item,0,sizeof(item));
 
                                 printf("* Info : ClientMAC:%s -> ",ClientInfo[ClientNum].ClientMAC);
                                 printf("ClientPackets: %s\\n",ClientInfo[ClientNum].ClientPackets);
@@ -2019,7 +2007,7 @@ if(Brower_APBrower->value())//if click NULL(0 ap found),the value is NULL
                 if(ClientNum==0)
                     Brower_ClientBrower->add("Found 0 Client!");
                 if (ReadLine[0]=='\\0')
-                    printf("* Error : 'scanap-01.csv' is NULL !\\n");
+                    printf("* Error : 'scanap.format' is NULL !\\n");
                 fclose(file_desc);
             }
     }} {}
@@ -2873,38 +2861,43 @@ Brower_ClientBrower_adv->clear();
 strcpy(ClientInfo[0].ClientMAC,"");
 memset(m_ClientMacSelect,'\\0',sizeof(m_ClientMacSelect));
 
+if(system("cat /tmp/FeedingBottle/targetap-01.csv | awk -F \\",\\" -v OFS=',' '{if(/WEP|WPA|OPN/){sub(/^ */,\\"\\",$1);sub(/^ */,\\"\\",$4);sub(/^ */,\\"\\",$6);sub(/^ */,\\"\\",$9);sub(/^ */,\\"\\",$14);print $1,$4,substr($6,1,4),$9,$14}else if(/BSSID|Station/){print$1}else if(/:/){sub(/^ */,\\"\\",$1);sub(/^ */,\\"\\",$5);sub(/^ */,\\"\\",$6);print $1,$5,$6}}' > /tmp/FeedingBottle/targetap.format"));
+
 FILE* file_desc;
 char ClientPackets_tmp[16]= {0};
 
-file_desc = fopen("/tmp/FeedingBottle/targetap-01.csv", "r");
+file_desc = fopen("/tmp/FeedingBottle/targetap.format", "r");
 
 if (file_desc == NULL)
-    printf("* Error : Can not open file : /tmp/FeedingBottle/targetap-01.csv\\n");
+    printf("* Error : Can not open file : /tmp/FeedingBottle/targetap.format\\n");
 else
     {
         char ReadLine[256]= {0};
-        int ClientNum=0;
         char clientitem[64][32]= {{0}}; //Max Client Item is 64 Clients see to "struct ClientInfo[64]={0};"
+        char item[3][18] = {{0}};
+        int i=0;
+        int ClientNum=0;
         int ClientListStart=0;
 
         while(fgets(ReadLine,256,file_desc)&&ClientNum!=64)
             {
-                if(ReadLine[0]=='S')//Station MAC
+                if( strstr(ReadLine,"Station MAC") )//Station MAC
                     ClientListStart=1;
-                if(ReadLine[2]==':' && ClientListStart==1 && strstr(ReadLine,APInfo[Brower_APBrower->value()-1].APMAC))
+                if( ClientListStart==1 && strstr(ReadLine,APInfo[Brower_APBrower->value()-1].APMAC) )
                     {
-                        if(ReadLine[59]==',')//59->", -76,       29,"
+                        char *temp = strtok(ReadLine,",");
+                        while(temp)
                             {
-                                strncpy(ClientPackets_tmp,&ReadLine[59]+1,14);
-                                //printf("ClientPackets_tmp : %s\\n",ClientPackets_tmp);
-                                strcpy(ClientPackets_tmp,strrchr(ClientPackets_tmp,' ')+1);//ClientPackets "29,"
-                                //printf("ClientPackets_tmp : %s\\n",ClientPackets_tmp);
-                                strtok(ClientPackets_tmp,",");//ClientPackets "29,"->"29"
-                                strcpy(ClientInfo[ClientNum].ClientPackets,ClientPackets_tmp);
-                                //printf("ClientPackets_tmp : %s\\n",ClientPackets_tmp);
+                                strcpy(item[i],temp);
+                                temp = strtok( NULL, "," );
+                                i++;
                             }
-                        strtok(ReadLine,",");
-                        strcpy(ClientInfo[ClientNum].ClientMAC,ReadLine);
+
+                        strcpy(ClientInfo[ClientNum].ClientMAC,item[0]);
+                        strcpy(ClientInfo[ClientNum].ClientPackets,item[1]);
+
+                        i=0;
+                        memset(item,0,sizeof(item));
 
                         printf("* Info : ClientMAC:%s -> ",ClientInfo[ClientNum].ClientMAC);
                         printf("ClientPackets: %s\\n",ClientInfo[ClientNum].ClientPackets);
@@ -2923,7 +2916,7 @@ else
         if(ClientNum==0)
             Brower_ClientBrower_adv->add("Found 0 Client!");
         if (ReadLine[0]=='\\0')
-            printf("* Error : 'targetap-01.csv' is NULL !\\n");
+            printf("* Error : 'targetap.format' is NULL !\\n");
         fclose(file_desc);
     }} {}
 }

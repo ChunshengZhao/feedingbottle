@@ -195,6 +195,14 @@ Function {} {open
   code {//Get WirelessDevice's Name && MAC address
 printf("------ Start FeedingBottle! ------\\n");
 
+int flag_type = fl_choice("Some processes that might interfere with the aircrack-ng suite. \\nIt is strongly recommended that these processes be eliminated prior to using the aircrack-ng suite.\\n\\nRun \\"airmon-ng check kill\\" command?","NO","YSE",NULL);
+if( flag_type == 1)
+    {
+        printf("* Info : YSE\\n");
+        printf("* Info : Command : airmon-ng check kill\\n");
+        if(system("airmon-ng check kill"));
+    }
+
 Fl::add_timeout(2.0,Timer_CallBack);
 
 if(system("rm -rf /tmp/FeedingBottle"));
@@ -275,31 +283,31 @@ else
           label {N/A}
           user_data {"WirelessDevName_1"}
           callback Button_WirelessDevName_CallBack
-          xywh {71 80 435 30} color 105 selection_color 6 labelfont 5 labelcolor 3 align 16
+          xywh {71 60 435 30} color 105 selection_color 6 labelfont 5 labelcolor 3 align 16
         }
         Fl_Light_Button LBt_WirelessDevName_2 {
           label {N/A}
           user_data {"WirelessDevName_2"}
           callback Button_WirelessDevName_CallBack
-          xywh {71 115 435 30} color 105 selection_color 6 labelfont 5 labelcolor 3 align 16
+          xywh {71 95 435 30} color 105 selection_color 6 labelfont 5 labelcolor 3 align 16
         }
         Fl_Light_Button LBt_WirelessDevName_3 {
           label {N/A}
           user_data {"WirelessDevName_3"}
           callback Button_WirelessDevName_CallBack
-          xywh {71 150 435 30} color 105 selection_color 6 labelfont 5 labelcolor 3 align 16
+          xywh {71 130 435 30} color 105 selection_color 6 labelfont 5 labelcolor 3 align 16
         }
         Fl_Light_Button LBt_WirelessDevName_4 {
           label {N/A}
           user_data {"WirelessDevName_4"}
           callback Button_WirelessDevName_CallBack
-          xywh {71 185 435 30} color 105 selection_color 6 labelfont 5 labelcolor 3 align 16
+          xywh {71 165 435 30} color 105 selection_color 6 labelfont 5 labelcolor 3 align 16
         }
         Fl_Light_Button LBt_WirelessDevName_5 {
           label {N/A}
           user_data {"WirelessDevName_5"}
           callback Button_WirelessDevName_CallBack
-          xywh {71 220 435 30} color 105 selection_color 6 labelfont 5 labelcolor 3 align 16
+          xywh {71 200 435 30} color 105 selection_color 6 labelfont 5 labelcolor 3 align 16
         }
         Fl_Button {} {
           label {Next ->}
@@ -313,13 +321,9 @@ else
           xywh {142 270 365 25} box UP_BOX color 34 labelfont 5 labelcolor 48 textfont 5 textsize 12 textcolor 1
         }
         Fl_Button {} {
-          label {FeedingBottle 3.35}
+          label {FeedingBottle 3.36}
           callback Box_About_CallBack
           tooltip {Coded by ZhaoChunsheng (Tianjin,China) at 2018.02.23} xywh {5 325 175 25} box NO_BOX color 0 labelfont 7 labelcolor 232
-        }
-        Fl_Check_Button Check_CheckKill {
-          label {airmon-ng check kill}
-          tooltip {Maybe some processes that might interfere with the aircrack-ng suite. It is strongly recommended that these processes be eliminated prior to using the aircrack-ng suite.} xywh {490 51 25 25} down_box DOWN_BOX value 1 labelfont 5 labelsize 12 labelcolor 48 align 4
         }
       }
       Fl_Group {} {
@@ -867,15 +871,6 @@ m_WirelessMonDevNameSelect[0]=0;
 if(strcmp(m_WirelessDevNameSelect,"N/A") && m_WirelessDevNameSelect[0]!=0)
     {
         Output_MonModMsg->textcolor((Fl_Color)3);
-
-        if(Check_CheckKill->value()==1)
-            {
-                printf("* Info : Command : airmon-ng check kill\\n");
-                Output_MonModMsg->value("airmon-ng check killing, please wait...");
-                Fl::check();
-                if(system("airmon-ng check kill"));
-            }
-
         Output_MonModMsg->value("Try to enable monitor mode, please wait...");
         Fl::check();
 

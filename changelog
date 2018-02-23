@@ -9,6 +9,9 @@ ZhaoChunsheng Tianjin,China
 - - - - - -
 Changelog:
 
+2018-02-23 FeedingBottle-3.35
+--- Added optional: "airmon-ng check kill".
+
 2018-02-19 FeedingBottle-3.34
 --- Rewrite ScanAP(),RefreshClientList() functions.
 

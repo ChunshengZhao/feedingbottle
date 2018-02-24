@@ -9,6 +9,9 @@ ZhaoChunsheng Tianjin,China
 - - - - - -
 Changelog:
 
+2018-02-24 FeedingBottle-3.37
+--- Rewrite the option "airmon-ng check kill".
+
 2018-02-23 FeedingBottle-3.36
 --- Move the option "airmon-ng check kill" to startup.
 

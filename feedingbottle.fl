@@ -195,26 +195,42 @@ Function {} {open
   code {//Get WirelessDevice's Name && MAC address
 printf("------ Start FeedingBottle! ------\\n");
 
-int flag_type = fl_choice("Some processes that might interfere with the aircrack-ng suite. \\nIt is strongly recommended that these processes be eliminated prior to using the aircrack-ng suite.\\n\\nRun \\"airmon-ng check kill\\" command?","NO","YSE",NULL);
-if( flag_type == 1)
-    {
-        printf("* Info : YSE\\n");
-        printf("* Info : Command : airmon-ng check kill\\n");
-        if(system("airmon-ng check kill"));
-    }
-
-Fl::add_timeout(2.0,Timer_CallBack);
+FILE* file_desc;
 
 if(system("rm -rf /tmp/FeedingBottle"));
 if(system("mkdir -p /tmp/FeedingBottle"));
 DelTemFiles();
+
+if(system("airmon-ng check | awk '/Found/' > /tmp/FeedingBottle/airmon-ng_check.txt"));
+file_desc = fopen("/tmp/FeedingBottle/airmon-ng_check.txt", "r");
+
+if (file_desc == NULL)
+    printf("* Error : Can not open file : airmon-ng_check.txt\\n");
+else
+    {
+        char ReadLine[64]= {0};
+        if(fgets(ReadLine,64,file_desc))
+            {
+                if(strstr(ReadLine,"Found"))
+                    {
+                        int flag_type = fl_choice("Some processes that might interfere with the aircrack-ng suite. \\nIt is strongly recommended that these processes be eliminated prior to using the aircrack-ng suite.\\n\\nRun \\"airmon-ng check kill\\" command?","NO","YSE",NULL);
+                        if( flag_type == 1)
+                            {
+                                printf("* Info : YSE\\n");
+                                printf("* Info : Command : airmon-ng check kill\\n");
+                                if(system("airmon-ng check kill"));
+                            }
+                    }
+            }
+    }
+
+Fl::add_timeout(2.0,Timer_CallBack);
 
 if(system("iw dev | awk '/Interface/{print $2} /addr/{print $2}' > /tmp/FeedingBottle/WirelessDevice.txt"));
 
 //WirelessDevice.txt
 int WirelessDeviceNum=0;
 
-FILE* file_desc;
 file_desc = fopen("/tmp/FeedingBottle/WirelessDevice.txt", "r");
 
 if (file_desc == NULL)
@@ -321,9 +337,9 @@ else
           xywh {142 270 365 25} box UP_BOX color 34 labelfont 5 labelcolor 48 textfont 5 textsize 12 textcolor 1
         }
         Fl_Button {} {
-          label {FeedingBottle 3.36}
+          label {FeedingBottle 3.37}
           callback Box_About_CallBack
-          tooltip {Coded by ZhaoChunsheng (Tianjin,China) at 2018.02.23} xywh {5 325 175 25} box NO_BOX color 0 labelfont 7 labelcolor 232
+          tooltip {Coded by ZhaoChunsheng (Tianjin,China) at 2018.02.24} xywh {5 325 175 25} box NO_BOX color 0 labelfont 7 labelcolor 232
         }
       }
       Fl_Group {} {
@@ -1076,6 +1092,7 @@ Function {DelTemFiles()} {} {
   code {//Delete temp files
 printf("* Info : DelTemFiles() Function actived !\\n");
 
+if(system("rm /tmp/FeedingBottle/airmon-ng_check.txt"));
 if(system("rm /tmp/FeedingBottle/targetap*"));
 if(system("rm /tmp/FeedingBottle/arp_replay_attack_associated_client.txt"));
 if(system("rm /tmp/FeedingBottle/key.txt"));

@@ -337,9 +337,9 @@ else
           xywh {142 270 365 25} box UP_BOX color 34 labelfont 5 labelcolor 48 textfont 5 textsize 12 textcolor 1
         }
         Fl_Button {} {
-          label {FeedingBottle 3.37}
+          label {FeedingBottle 3.38}
           callback Box_About_CallBack
-          tooltip {Coded by ZhaoChunsheng (Tianjin,China) at 2018.02.24} xywh {5 325 175 25} box NO_BOX color 0 labelfont 7 labelcolor 232
+          tooltip {Coded by ZhaoChunsheng (Tianjin,China) at 2018.02.26} xywh {5 325 175 25} box NO_BOX color 0 labelfont 7 labelcolor 232
         }
       }
       Fl_Group {} {
@@ -1895,6 +1895,8 @@ if(Button_ScanAP->value()==1)
                         char item[5][33] = \{\{0\}\};
                         int i=0;
                         int APNum=0;
+                        
+                        memset(APInfo,0,sizeof(APInfo));
 
                         while(fgets(ReadLine,256,file_desc) && APNum!=128)
                             \{
@@ -1993,6 +1995,8 @@ if(Brower_APBrower->value())//if click NULL(0 ap found),the value is NULL
                 int i=0;
                 int ClientNum=0;
                 int ClientListStart=0;
+                
+                memset(ClientInfo,0,sizeof(ClientInfo));
 
                 while(fgets(ReadLine,256,file_desc)&&ClientNum!=64)
                     {
@@ -2902,6 +2906,8 @@ else
         int i=0;
         int ClientNum=0;
         int ClientListStart=0;
+        
+        memset(ClientInfo,0,sizeof(ClientInfo));
 
         while(fgets(ReadLine,256,file_desc)&&ClientNum!=64)
             {

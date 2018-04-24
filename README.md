@@ -12,3 +12,8 @@ Build steps:
 #fluid -c feedingbottle.fl  
 #fltk-config --compile feedingbottle.cxx  
 #./feedingbottle  
+
+
+Screenshots:
+
+![Screenshots](https://github.com/ChunshengZhao/feedingbottle/blob/master/screenshots.png)
